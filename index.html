@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Comic methods</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@1,700&display=swap" rel="stylesheet">
+    <style>
+        .bgTextBox {
+            background-color: rgb(241, 241, 241);
+            padding: 10px;
+        }
+
+        .bgDemo {
+            border-style: solid;
+            border-width: 0.5px;
+            padding: 10px;
+        }
+
+        .highlight pre {
+            white-space: pre-wrap;
+        }
+
+        .nav-item {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body ng-app="rlcApp">
+
+    <nav class="navbar navbar-expand-md bgTextBox navbar-light">
+        <!-- Brand -->
+        <a class="navbar-brand" href="#/!">CSRCA </a>
+
+        <!-- Toggler/collapsibe Button -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar links -->
+        <div class="collapse navbar-collapse" id="collapsibleNavbar">
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbardrop2" data-toggle="dropdown">
+                        Methods
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#!canvas1">SVGGrid</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <br>
+    <div class="container">
+        <div ng-view></div>
+    </div>
+    <script src="js/SVGCell.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.js"></script>
+
+
+    <script>
+        var app = angular.module("rlcApp", ["ngRoute"]);
+        app.config(function ($routeProvider) {
+            $routeProvider
+                .when("/", {
+                    templateUrl: "partials/main.html"
+                })
+                .when("/canvas1", {
+                    templateUrl: "partials/canvas1.html",
+                    controller: "canvas1"
+                });
+        });
+
+        app.controller("canvas1", function ($scope) {
+
+
+            var frame = document.getElementById("svg01");
+
+            point = frame.createSVGPoint();
+            var bubble = SVG("g")
+            var gridSize = 64
+            var boxSize = 10
+            for (y = 0; y < gridSize; y++) {
+                for (x = 0; x < gridSize; x++) {
+                    let cell = new SVGCell("x:" + x + " y:" + y, boxSize)
+                    var color = Math.floor(Math.random() * 8)
+                    cell.setColor(color)
+                    cell.move(x, y)
+                    cell.svg.addEventListener('mouseover', function (e) {
+                        showTooltip(e, cell.id)
+                    });
+                    bubble.appendChild(cell.svg)
+                }
+            }
+
+            var buffer = 4
+            var scale = (frame.clientHeight - buffer * 2) / (gridSize * boxSize)
+            bubble.setAttribute("transform", "translate(" + buffer + "," + buffer + ") scale(" + scale + "," +
+                scale + ")")
+            frame.appendChild(bubble)
+
+        })
+    </script>
+</body>
+
+</html>
